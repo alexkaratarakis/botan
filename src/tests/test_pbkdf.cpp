@@ -18,6 +18,10 @@
    #include <botan/scrypt.h>
 #endif
 
+#if defined(BOTAN_HAS_ARGON2)
+   #include <botan/argon2.h>
+#endif
+
 namespace Botan_Tests {
 
 namespace {
@@ -95,6 +99,47 @@ class Scrypt_KAT_Tests final : public Text_Based_Test
    };
 
 BOTAN_REGISTER_TEST("scrypt", Scrypt_KAT_Tests);
+
+#endif
+
+#if defined(BOTAN_HAS_ARGON2)
+
+class Argon2_KAT_Tests final : public Text_Based_Test
+   {
+   public:
+      Argon2_KAT_Tests() : Text_Based_Test("argon2.vec", "Passphrase,Salt,Secret,AD,P,M,T,Output") {}
+
+      Test::Result run_one_test(const std::string&, const VarMap& vars) override
+         {
+         const size_t P = get_req_sz(vars, "P");
+         const size_t M = get_req_sz(vars, "M");
+         const size_t T = get_req_sz(vars, "T");
+         const size_t y = 0; // fixme
+         const std::vector<uint8_t> key = get_req_bin(vars, "Secret");
+         const std::vector<uint8_t> ad = get_req_bin(vars, "AD");
+         const std::vector<uint8_t> salt = get_req_bin(vars, "Salt");
+         const std::vector<uint8_t> passphrase = get_req_bin(vars, "Passphrase");
+         
+         const std::vector<uint8_t> expected = get_req_bin(vars, "Output");
+
+         Test::Result result("Argon2");
+
+         std::vector<uint8_t> output(expected.size());
+         Botan::argon2(output.data(), output.size(),
+                       std::string(reinterpret_cast<const char*>(passphrase.data()), passphrase.size()),
+                       salt.data(), salt.size(),
+                       key.data(), key.size(),
+                       ad.data(), ad.size(),
+                       y, P, M, T);
+
+         result.test_eq("derived key", output, expected);
+
+         return result;
+         }
+
+   };
+
+BOTAN_REGISTER_TEST("argon2", Argon2_KAT_Tests);
 
 #endif
 
