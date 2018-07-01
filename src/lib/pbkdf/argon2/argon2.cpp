@@ -25,7 +25,7 @@ secure_vector<uint8_t> argon2_H0(HashFunction& blake2b,
                                  const uint8_t ad[], size_t ad_len,
                                  size_t y, size_t p, size_t M, size_t t)
    {
-   const uint8_t v = 19;
+   const uint8_t v = 19; // Argon2 version code
 
    blake2b.update_le<uint32_t>(p);
    blake2b.update_le<uint32_t>(output_len);
@@ -57,6 +57,7 @@ void Htick(uint8_t output[],
    {
    if(output_len <= 64)
       {
+      // TODO:
       //return Htick_short(output, output_len, H0, p0, p1);
       throw Invalid_State("Htick output length too short");
       }
@@ -262,7 +263,7 @@ void argon2(uint8_t output[], size_t output_len,
    if(M < 2*SYNC_POINTS*threads)
       M = 2*SYNC_POINTS*threads;
 
-   const size_t memory = M / (SYNC_POINTS*threads)) * (SYNC_POINTS*threads);
+   const size_t memory = (M / (SYNC_POINTS*threads)) * (SYNC_POINTS*threads);
    printf("mtick = %d\n", memory);
 
    secure_vector<uint64_t> B(memory * 1024/8);
