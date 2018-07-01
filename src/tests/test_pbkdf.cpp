@@ -111,16 +111,16 @@ class Argon2_KAT_Tests final : public Text_Based_Test
 
       Test::Result run_one_test(const std::string&, const VarMap& vars) override
          {
-         const size_t P = get_req_sz(vars, "P");
-         const size_t M = get_req_sz(vars, "M");
-         const size_t T = get_req_sz(vars, "T");
+         const size_t P = vars.get_req_sz("P");
+         const size_t M = vars.get_req_sz("M");
+         const size_t T = vars.get_req_sz("T");
          const size_t y = 0; // fixme
-         const std::vector<uint8_t> key = get_req_bin(vars, "Secret");
-         const std::vector<uint8_t> ad = get_req_bin(vars, "AD");
-         const std::vector<uint8_t> salt = get_req_bin(vars, "Salt");
-         const std::vector<uint8_t> passphrase = get_req_bin(vars, "Passphrase");
-         
-         const std::vector<uint8_t> expected = get_req_bin(vars, "Output");
+         const std::vector<uint8_t> key = vars.get_req_bin("Secret");
+         const std::vector<uint8_t> ad = vars.get_req_bin("AD");
+         const std::vector<uint8_t> salt = vars.get_req_bin("Salt");
+         const std::vector<uint8_t> passphrase = vars.get_req_bin("Passphrase");
+
+         const std::vector<uint8_t> expected = vars.get_req_bin("Output");
 
          Test::Result result("Argon2");
 
